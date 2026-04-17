@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vorth Study — 26 Days</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f5f4f0;
+    --surface:  #ffffff;
+    --surface2: #f0efe9;
+    --border:   #e2e0d8;
+    --border2:  #ccc9be;
+    --text:     #1a1916;
+    --muted:    #7a7870;
+    --muted2:   #a8a69e;
+    --accent:   #2d5a16;
+    --accent-l: #e8f0e0;
+    --p0: #0e6e9e; --p0bg: #e5f3fa;
+    --p1: #a05a10; --p1bg: #fdf0e0;
+    --p2: #7a18a0; --p2bg: #f5e8fc;
+    --p3: #0e8a50; --p3bg: #e0f7ed;
+    --p4: #b82020; --p4bg: #fce8e8;
+    --p5: #2d5a16; --p5bg: #e8f0e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .hdr { padding: 52px 52px 36px; border-bottom: 1px solid var(--border); background: var(--surface); position: relative; overflow: hidden; }
+  .hdr::after { content:''; position:absolute; bottom:-60px; right:-60px; width:280px; height:280px; background:radial-gradient(circle, rgba(45,90,22,.06) 0%, transparent 65%); pointer-events:none; }
+  .hdr-tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; font-weight:500; }
+  h1 { font-family:'Syne',sans-serif; font-size:clamp(28px,4vw,52px); font-weight:800; line-height:1.0; letter-spacing:-.025em; margin-bottom:14px; color:var(--text); }
+  h1 em { color:var(--accent); font-style:normal; }
+  .hdr-sub { font-size:11px; color:var(--muted); line-height:1.8; max-width:440px; }
+
+  /* PROGRESS */
+  .prog { display:grid; grid-template-columns:1fr auto; align-items:center; gap:32px; padding:22px 52px; border-bottom:1px solid var(--border); background:var(--surface); }
+  .pb-track { height:3px; background:var(--border); border-radius:2px; }
+  .pb-fill { height:3px; background:var(--accent); border-radius:2px; transition:width .5s cubic-bezier(.4,0,.2,1); position:relative; }
+  .pb-fill::after { content:''; position:absolute; right:-4px; top:-3px; width:9px; height:9px; background:var(--accent); border-radius:50%; box-shadow:0 0 0 3px var(--accent-l); }
+  .stats { display:flex; gap:28px; flex-shrink:0; }
+  .stat { text-align:right; }
+  .stat-n { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; line-height:1; color:var(--text); }
+  .stat-n small { font-size:11px; color:var(--muted); font-weight:400; }
+  .stat-l { font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted2); margin-top:3px; }
+
+  /* LAYOUT */
+  .layout { display:grid; grid-template-columns:192px 1fr; }
+
+  /* SIDEBAR */
+  .sidebar { border-right:1px solid var(--border); background:var(--surface); padding:24px 0; position:sticky; top:0; height:calc(100vh - 134px); overflow-y:auto; }
+  .sidebar::-webkit-scrollbar { width:0; }
+  .nav-item { display:flex; align-items:center; gap:10px; padding:9px 22px; cursor:pointer; border-left:2px solid transparent; transition:all .15s; }
+  .nav-item:hover { background:var(--surface2); }
+  .nav-item.active { border-left-color:var(--accent); background:var(--accent-l); }
+  .nav-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .nav-label { font-size:9px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; line-height:1.5; }
+  .nav-item.active .nav-label { color:var(--accent); }
+
+  /* DAYS */
+  .panel { padding:36px 48px; overflow-y:auto; }
+  .phase-block { margin-bottom:48px; }
+  .phase-hd { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+  .phase-pip { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .phase-lbl { font-family:'Syne',sans-serif; font-size:10px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  .phase-ct { margin-left:auto; font-size:10px; color:var(--muted2); }
+
+  .card { display:grid; grid-template-columns:48px 1fr; gap:0 14px; padding:13px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:all .12s; border-radius:6px; }
+  .card:hover { background:var(--surface2); padding-left:10px; padding-right:10px; margin:0 -10px; }
+  .card:last-child { border-bottom:none; }
+
+  .num-col { display:flex; align-items:flex-start; justify-content:center; padding-top:2px; }
+  .circle { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; color:var(--muted); cursor:pointer; transition:all .2s; user-select:none; flex-shrink:0; background:var(--surface); }
+  .circle:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
+  .card.done .circle { background:var(--accent); border-color:var(--accent); color:#fff; font-size:13px; }
+
+  .body { min-width:0; }
+  .title-row { display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
+  .title { font-family:'Syne',sans-serif; font-size:13px; font-weight:600; color:var(--text); line-height:1.3; }
+  .card.done .title { color:var(--muted2); text-decoration:line-through; text-decoration-color:var(--border2); }
+  .chev { margin-left:auto; font-size:9px; color:var(--muted2); transition:transform .2s; }
+  .card.open .chev { transform:rotate(180deg); }
+  .meta { font-size:10px; color:var(--muted); margin-bottom:5px; }
+  .vorth-row { font-size:10px; color:var(--muted); line-height:1.5; }
+  .vtag { display:inline-block; font-size:8px; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:3px; margin-right:6px; font-weight:500; }
+
+  .detail { display:none; grid-column:1/-1; margin-top:12px; padding:14px 16px; background:var(--surface2); border-radius:6px; border-left:2px solid var(--border2); font-size:11px; color:var(--muted); line-height:1.8; }
+  .card.open .detail { display:block; }
+
+  /* phase colors */
+  .c-p0{background:var(--p0)} .t-p0{color:var(--p0)} .bg-p0{background:var(--p0bg);color:var(--p0)}
+  .c-p1{background:var(--p1)} .t-p1{color:var(--p1)} .bg-p1{background:var(--p1bg);color:var(--p1)}
+  .c-p2{background:var(--p2)} .t-p2{color:var(--p2)} .bg-p2{background:var(--p2bg);color:var(--p2)}
+  .c-p3{background:var(--p3)} .t-p3{color:var(--p3)} .bg-p3{background:var(--p3bg);color:var(--p3)}
+  .c-p4{background:var(--p4)} .t-p4{color:var(--p4)} .bg-p4{background:var(--p4bg);color:var(--p4)}
+  .c-p5{background:var(--p5)} .t-p5{color:var(--p5)} .bg-p5{background:var(--p5bg);color:var(--p5)}
+
+  .panel::-webkit-scrollbar { width:3px; }
+  .panel::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+  @media(max-width:680px) {
+    .hdr,.prog { padding:28px 20px; }
+    .layout { grid-template-columns:1fr; }
+    .sidebar { display:none; }
+    .panel { padding:24px 20px; }
+    .prog { grid-template-columns:1fr; gap:14px; }
+    .stats { justify-content:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-tag">Vorth · Combinatorial Optimization · May 2025</div>
+  <h1>26 Days.<br><em>First Principles.</em><br>No Shortcuts.</h1>
+  <p class="hdr-sub">Du, Pardalos, Hu &amp; Wu · 230 pages · Every concept anchored to a Vorth vertical. Click the day number circle to mark complete.</p>
+</header>
+
+<div class="prog">
+  <div class="pb-track"><div class="pb-fill" id="pb" style="width:0%"></div></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="sn">0</div><div class="stat-l">Done</div></div>
+    <div class="stat"><div class="stat-n"><small style="color:var(--muted2)">of </small>26</div><div class="stat-l">Days</div></div>
+    <div class="stat"><div class="stat-n" id="sp">0<small>%</small></div><div class="stat-l">Progress</div></div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const PHASES = [
+  { id:'p0', label:'Phase 0', sub:'Data Structures' },
+  { id:'p1', label:'Phase 1', sub:'Foundations'     },
+  { id:'p2', label:'Phase 2', sub:'Core Algorithms' },
+  { id:'p3', label:'Phase 3', sub:'Network Flows'   },
+  { id:'p4', label:'Phase 4', sub:'Complexity'      },
+  { id:'p5', label:'Phase 5', sub:'Vorth Build'     },
+];
+
+const DAYS = [
+  { day:1,  p:'p0', title:'List, Dict, Set',                           meta:'Core storage · Python built-ins',            vorth:'Vorth Agri',       vd:'store farm records, look up yields, deduplicate crop types',                    detail:'Understand lists as ordered sequences, dicts as key-value lookups, sets as membership checkers. Build a farm registry: add farms, look up yield by name, find which crops appear more than once. The three questions: ordered sequence? key lookup? membership check?' },
+  { day:2,  p:'p0', title:'Stack and Queue',                           meta:'Order of processing · collections.deque',    vorth:'Vorth Flow',       vd:'model a truck dispatch queue vs a loading stack',                               detail:'Understand FIFO vs LIFO with physical intuition. Implement both using deque. Run the BFS vs DFS demo — see how popleft vs pop changes the entire traversal order of the same graph with one character change.' },
+  { day:3,  p:'p0', title:'Heap and Priority Queue',                   meta:'Always get the best next item · heapq',      vorth:'Vorth Grid',       vd:'dispatch the power unit with lowest current load next',                         detail:'Understand the heap property: parent is always smaller than children. Build a min-heap manually, then use Python heapq. Simulate a task scheduler: 10 jobs with priorities, always process most urgent next.' },
+  { day:4,  p:'p0', title:'Graph',                                     meta:'Relationships between things · NetworkX',    vorth:'Vorth Trade',      vd:'model the road network connecting markets in Northern Ghana',                   detail:'Understand nodes, edges, directed vs undirected, weighted vs unweighted. Build a graph from scratch as an adjacency list (dict of lists), then rebuild in NetworkX. Understand adjacency list vs matrix and when to use each.' },
+  { day:5,  p:'p0', title:'UnionFind',                                 meta:'Track group membership · from scratch',      vorth:'Vorth Civic',      vd:'which villages are already connected to the water network?',                    detail:'Build UnionFind from scratch with full understanding — no copy-pasting. Implement find() with path compression and union() with rank. Test manually: 8 villages, merge in sequence, verify group membership at each step.' },
+  { day:6,  p:'p0', title:'Matrix and NumPy',                          meta:'Bulk numerical work · numpy',                vorth:'Vorth Atlas',      vd:'distance matrix between 10 regional hubs',                                     detail:'Understand a matrix as a 2D grid of numbers. Build a distance matrix between 10 towns using NumPy. Find the closest pair. Understand why NumPy beats nested Python lists for numerical work and when it matters.' },
+  { day:7,  p:'p1', title:'What is combinatorial optimization?',       meta:'Ch. 1 §1.1–1.2 · pp. 1–6',                  vorth:'Vorth Agri',       vd:'why crop scheduling is a finite search over feasible solutions',               detail:'Define feasible solution vs optimal solution. Brute force MST to feel the search space. Kruskal\'s from scratch using UnionFind. Path Optimality theorem. You already did this — revisit and it will feel completely different now.' },
+  { day:8,  p:'p1', title:'Running time, Big-O and preprocessing',     meta:'Ch. 1 §1.3–1.5 · pp. 6–11',                 vorth:'Vorth Engine',     vd:'why algorithm complexity defines platform scalability',                         detail:'Master O(n log n) vs O(n²) with real timing experiments using timeit. Implement a priority queue from scratch. Understand preprocessing as a design pattern — sorting before the main loop is a recurring theme.' },
+  { day:9,  p:'p1', title:'Divide and conquer — merge sort',           meta:'Ch. 2 §2.1 · pp. 13–19',                    vorth:'Vorth Atlas',      vd:'decomposing regional data aggregation into subproblems',                        detail:'Self-reducibility principle. Implement merge sort from scratch. Write and solve the recurrence T(n) = 2T(n/2) + n by hand. Verify with timing on arrays of 10³ to 10⁶ elements.' },
+  { day:10, p:'p1', title:'Heaps and counting sort',                   meta:'Ch. 2 §2.2–2.4 · pp. 19–36',                vorth:'Vorth Flow',       vd:'priority scheduling of transport tasks',                                        detail:'Build a binary heap from scratch. Understand extract-min. Implement counting sort — see why it beats comparison sorts for bounded integers. Apply to a logistics scheduling simulation.' },
+  { day:11, p:'p2', title:'Dynamic programming from scratch',          meta:'Ch. 3 §3.1 · pp. 37–44',                    vorth:'Vorth Agri',       vd:'multi-season planting decisions as a DP table',                                 detail:'Optimal substructure and overlapping subproblems. Build DP bottom-up for coin change and knapsack. Visualize the DP table filling in. Memoization vs tabulation — when to use each.' },
+  { day:12, p:'p2', title:'Shortest paths — Dijkstra',                 meta:'Ch. 3 §3.2–3.3 · pp. 44–54',                vorth:'Vorth Flow / Trade', vd:'cheapest routing of goods across Ghanaian road networks',                  detail:'Build Dijkstra manually with a heap. Verify against NetworkX. Model a 10-city Ghana road network. Understand exactly why Dijkstra fails with negative weights.' },
+  { day:13, p:'p2', title:'Bellman-Ford and all-pairs shortest paths', meta:'Ch. 3 §3.4–3.6 · pp. 54–67',                vorth:'Vorth Trade',      vd:'multi-hop supply chains with variable costs',                                   detail:'Implement Bellman-Ford. Detect negative cycles. Implement Floyd-Warshall for all-pairs. Compare runtime on dense vs sparse graphs. Understand when each algorithm is the right choice.' },
+  { day:14, p:'p2', title:'Greedy algorithms and matroids',            meta:'Ch. 4 §4.1–4.2 · pp. 69–81',                vorth:'Vorth Grid',       vd:'greedy dispatch of power units across a microgrid',                             detail:'Exchange argument proofs — why greedy is provably safe here. Matroid theory: independence system, exchange property. Prove why greedy works on matroids and fails outside them.' },
+  { day:15, p:'p2', title:'Minimum spanning trees and local ratio',    meta:'Ch. 4 §4.3–4.4 · pp. 81–92',                vorth:'Vorth Civic',      vd:'minimum-cost infrastructure connectivity for rural communities',                detail:'Prim\'s vs Kruskal\'s — when each is better. Local ratio method as a general technique. Build a real infrastructure planning simulator: N villages, randomized distances, find the optimal backbone.' },
+  { day:16, p:'p3', title:'Maximum flow — Ford-Fulkerson',             meta:'Ch. 5 §5.1 · pp. 95–102',                   vorth:'Vorth Agri',       vd:'irrigation water allocation as a flow problem',                                 detail:'Residual graph, augmenting paths. Implement Ford-Fulkerson manually. Build an irrigation network: reservoir → canals → fields → demand nodes. Understand why irrational capacities break this algorithm.' },
+  { day:17, p:'p3', title:'Edmonds-Karp and bipartite matching',       meta:'Ch. 5 §5.2–5.3 · pp. 102–110',              vorth:'Vorth Trade',      vd:'matching suppliers to buyers optimally',                                        detail:'Edmonds-Karp: BFS augmentation gives polynomial time guarantee. Bipartite matching via max-flow reduction. Model a supplier-buyer matching problem for Northern Ghana markets.' },
+  { day:18, p:'p3', title:'Dinitz and min-cost max-flow',              meta:'Ch. 5 §5.4–5.5 · pp. 110–114',              vorth:'Vorth Flow',       vd:'minimum-cost logistics routing',                                                detail:'Level graphs and blocking flows. Use OR-Tools MinCostFlow: 5 depots, 10 destinations, variable transport costs. Model a real logistics scenario end to end.' },
+  { day:19, p:'p3', title:'Chinese postman and graph matching',        meta:'Ch. 5 §5.6 · pp. 114–121',                  vorth:'Vorth Civic',      vd:'optimal inspection routing for infrastructure networks',                        detail:'Eulerian circuits and T-joins. Chinese Postman as minimum-weight T-join. Model an infrastructure inspection route covering all roads in a district.' },
+  { day:20, p:'p4', title:'P vs NP — what is NP?',                    meta:'Ch. 8 §8.1 · pp. 123–131',                  vorth:'Vorth Engine',     vd:'why some optimization problems require approximation',                          detail:'Certificate-based definition of NP. Decision vs optimization problems. Build intuition: checking a solution is easy, finding one may be hard. Experiment with small SAT instances in Python.' },
+  { day:21, p:'p4', title:'NP-completeness and reductions',            meta:'Ch. 8 §8.2–8.3 · pp. 131–147',              vorth:'Vorth Forge',      vd:'why production scheduling is NP-hard',                                          detail:'Cook-Levin theorem. Polynomial reductions as the key tool. Prove 3-SAT reduces to Hamiltonian Cycle. Use pysat to experiment with SAT solvers on small industrial scheduling problems.' },
+  { day:22, p:'p4', title:'Vertex cover, 3DM and partition',           meta:'Ch. 8 §8.4–8.6 · pp. 147–154',              vorth:'Vorth Agri',       vd:'NP-hard crop allocation recognized and handled with ILP',                      detail:'Vertex cover NP-completeness via 3-SAT reduction. Partition problem as precursor to bin-packing. Use PuLP to solve small instances via ILP as the practical workaround.' },
+  { day:23, p:'p4', title:'Approximation algorithms',                  meta:'Ch. 8 §8.7–8.8 · pp. 165–189',              vorth:'Vorth Engine',     vd:'building approximation guarantees into Vorth solvers',                         detail:'Greedy 2-approximation for vertex cover. PTAS vs APX vs inapproximable. Build a 2-approximation for TSP using MST. Measure approximation ratio on random graphs.' },
+  { day:24, p:'p5', title:'ILP modeling with PuLP and OR-Tools',       meta:'Synthesis · PuLP, OR-Tools CP-SAT',          vorth:'Vorth Agri',       vd:'full crop scheduling ILP model',                                               detail:'Formulate and solve a complete ILP: crop-season allocation across 20 farms, 5 crops, 3 seasons, market demand constraints. Compare OR-Tools CP-SAT vs PuLP/CBC on solve time and solution quality.' },
+  { day:25, p:'p5', title:'Network optimization — full pipeline',      meta:'Synthesis · NetworkX, OR-Tools, scipy',      vorth:'Vorth Flow',       vd:'end-to-end supply chain optimization for Northern Ghana',                      detail:'Build a complete supply chain model: farm nodes → processing hubs → markets. Apply MCMF for routing. Add capacity constraints and seasonal demand. Benchmark against a greedy baseline.' },
+  { day:26, p:'p5', title:'Vorth systems review and capstone',         meta:'Full review · all tools',                    vorth:'Vorth',            vd:'map every algorithm to its platform vertical',                                  detail:'Review all phases. Solve 3 chapter exercises from scratch without help. Write a 1-page technical memo: which algorithms power which Vorth vertical and why. Identify next study topic: submodular optimization.' },
+];
+
+const KEY = 'vorth26_v2';
+let done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+function save() { localStorage.setItem(KEY, JSON.stringify([...done])); }
+
+function updateStats() {
+  const n = done.size, pct = Math.round(n/26*100);
+  document.getElementById('pb').style.width = pct + '%';
+  document.getElementById('sn').textContent = n;
+  document.getElementById('sp').innerHTML = pct + '<small>%</small>';
+}
+
+function build() {
+  const nav = document.getElementById('sidebar');
+  nav.innerHTML = '';
+  PHASES.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'nav-item';
+    el.dataset.pid = p.id;
+    el.innerHTML = `<div class="nav-dot c-${p.id}"></div><div class="nav-label">${p.label}<br>${p.sub}</div>`;
+    el.onclick = () => document.getElementById('b-'+p.id)?.scrollIntoView({behavior:'smooth',block:'start'});
+    nav.appendChild(el);
+  });
+
+  const panel = document.getElementById('panel');
+  panel.innerHTML = '';
+
+  PHASES.forEach(p => {
+    const pdays = DAYS.filter(d => d.p === p.id);
+    const doneN = pdays.filter(d => done.has(d.day)).length;
+    const block = document.createElement('div');
+    block.className = 'phase-block';
+    block.id = 'b-' + p.id;
+    block.innerHTML = `<div class="phase-hd"><div class="phase-pip c-${p.id}"></div><div class="phase-lbl">${p.label} — ${p.sub}</div><div class="phase-ct">${doneN}/${pdays.length}</div></div>`;
+
+    pdays.forEach(d => {
+      const isDone = done.has(d.day);
+      const card = document.createElement('div');
+      card.className = 'card' + (isDone ? ' done' : '');
+      card.innerHTML = `
+        <div class="num-col"><div class="circle">${isDone ? '✓' : d.day}</div></div>
+        <div class="body">
+          <div class="title-row">
+            <div class="title">${d.title}</div>
+            <div class="chev">▾</div>
+          </div>
+          <div class="meta">${d.meta}</div>
+          <div class="vorth-row"><span class="vtag bg-${d.p}">${d.vorth}</span>${d.vd}</div>
+          <div class="detail">${d.detail}</div>
+        </div>
+      `;
+      card.addEventListener('click', e => {
+        if (e.target.closest('.circle')) return;
+        const open = card.classList.contains('open');
+        document.querySelectorAll('.card.open').forEach(c => c.classList.remove('open'));
+        if (!open) card.classList.add('open');
+      });
+      card.querySelector('.circle').addEventListener('click', e => {
+        e.stopPropagation();
+        if (done.has(d.day)) done.delete(d.day); else done.add(d.day);
+        save(); build(); updateStats();
+      });
+      block.appendChild(card);
+    });
+    panel.appendChild(block);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        const id = en.target.id.replace('b-','');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.pid === id));
+      }
+    });
+  }, { threshold: 0.2 });
+  PHASES.forEach(p => { const el = document.getElementById('b-'+p.id); if(el) obs.observe(el); });
+}
+
+build();
+updateStats();
+</script>
+</body>
+</html>
