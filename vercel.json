@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/vorth_26_day_plan.html" }
+  ]
+}
